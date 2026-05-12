@@ -10,7 +10,7 @@ The four screens (coverage, lift, jaccard, information-split) run in seconds on 
 - [`tests/`](./tests/) — 16 unit tests covering the screens and orchestrator. Run via `pytest`.
 - [`case-study/`](./case-study/) — 10 curated documents from the original crypto project that produced this methodology. See [`case-study/00-readme.md`](./case-study/00-readme.md) for the reading guide.
 - [`examples/fcmfd_replay.ipynb`](./examples/fcmfd_replay.ipynb) — runnable Jupyter notebook replaying an FCMFD-style SIA-kill on **genuinely synthetic data** (NOT a copy of the real Phase 4 data the case study describes).
-- [`BLOG_POST.md`](./BLOG_POST.md) — canonical Markdown source for the project blog post telling the negative-result-with-mechanism story across four crypto strategy attempts. (Hosted version: `<PUBLISHED_URL — filled in at launch>`.)
+- [`BLOG_POST.md`](./BLOG_POST.md) — canonical Markdown source for the project blog post telling the negative-result-with-mechanism story across four crypto strategy attempts. (Hosted version: <https://hallengray.github.io/signal-independence-audit/BLOG_POST.html>.)
 
 ## Why this exists
 
@@ -82,7 +82,7 @@ For a runnable worked example on genuinely synthetic data, see [`examples/fcmfd_
 
 [`BLOG_POST.md`](./BLOG_POST.md) (in this repo) — canonical Markdown source. ~3500 words covering the four-phase negative-result story with mechanism, the literature audit, the AI-assisted-research corrigendum, and the framework artefacts that survive.
 
-`<PUBLISHED_URL — filled in at launch>` — hosted version (links rewritten to absolute URLs for off-repo readers).
+[**Hosted version on GitHub Pages**](https://hallengray.github.io/signal-independence-audit/BLOG_POST.html) — relative case-study links auto-resolved by GitHub Pages, so off-repo readers can navigate the whole story without leaving the published site.
 
 ## Read the case study
 

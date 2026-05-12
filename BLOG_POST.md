@@ -1,4 +1,4 @@
-> **Note:** This is the canonical Markdown source. The published version at <HOSTING_PLATFORM_URL — to be filled at launch in Task 15> has links rewritten to absolute GitHub URLs.
+> **Note:** This is the canonical Markdown source. The published version is hosted at <https://hallengray.github.io/signal-independence-audit/BLOG_POST.html> (GitHub Pages auto-resolves the relative `./case-study/*.md` links to the corresponding Pages-rendered HTML).
 
 # Four crypto strategy failures, and the tool that caught one in 3 seconds
 
