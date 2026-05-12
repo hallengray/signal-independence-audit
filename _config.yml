@@ -1,0 +1,28 @@
+title: Signal Independence Audit
+description: >-
+  Pre-hyperopt screening framework for testing whether a candidate signal
+  adds information over a baseline. Methodology + crypto case study.
+theme: jekyll-theme-cayman
+
+# GitHub Pages default plugins (jekyll-readme-index serves README.md as the
+# landing page; jekyll-relative-links rewrites *.md hrefs to *.html so the
+# README's links into BLOG_POST.md and case-study/*.md resolve on Pages).
+
+include:
+  - case-study
+
+exclude:
+  - .venv-test
+  - .pytest_cache
+  - .mypy_cache
+  - signal_independence_audit.egg-info
+  - tests
+  - pyproject.toml
+  - Gemfile
+  - Gemfile.lock
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
