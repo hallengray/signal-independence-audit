@@ -207,6 +207,74 @@ def _write_report(out_path: Path, results: list[dict[str, Any]], overall_verdict
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def run_screens(
+    pooled: pd.DataFrame,
+    jaccard_frame: pd.DataFrame,
+) -> dict[str, Any]:
+    """Run the 4-screen Signal Independence Audit on a pre-built signal dataframe.
+
+    This is the library-shape entry point. The CLI `main()` calls this after
+    loading data from disk; notebooks and other library callers can build
+    `pooled` directly from synthetic or in-memory data and skip the CLI layer.
+
+    Parameters
+    ----------
+    pooled : pd.DataFrame
+        Per-candle signal dataframe with the columns Screens 1, 2, and 4 read:
+        `macro_pass`, `breakout_pass`, `funding_gate_pass`,
+        `funding_gate_inversion`, `funding_4h`, `vol_20d`,
+        `fwd_ret_5d`, `fwd_ret_10d`, `fwd_ret_20d`, `pair`.
+    jaccard_frame : pd.DataFrame
+        A single-pair frame used to build Screen 3's hyperparameter grid.
+        Typically the first per-pair frame in the multi-pair pooled case.
+
+    Returns
+    -------
+    dict
+        ``{"verdict": "PASS" | "FAIL" | "FAIL+INVERT",
+            "exit_code": 0 | 1 | 2,
+            "evidence": {
+                "screen_1_coverage": {...},
+                "screen_2_lift": {...},
+                "screen_3_jaccard": {...},
+                "screen_4_information_split": {...},
+            }}``
+    """
+    r1 = evaluate_coverage(pooled)
+    treatment, control_b, inversion = _screen_2_cohorts(pooled)
+    r2 = evaluate_lift(control_b=control_b, treatment=treatment, inversion=inversion)
+    grid = _screen_3_grid(jaccard_frame)
+    r3 = evaluate_jaccard(grid)
+    funding_binned, vol_binned = _screen_4_terciles(pooled)
+    r4 = evaluate_information_split(
+        funding_binned=funding_binned, vol_binned=vol_binned
+    )
+
+    results: list[dict[str, Any]] = [dict(r1), dict(r2), dict(r3), dict(r4)]
+    all_pass = all(r["verdict"] == "PASS" for r in results)
+    inversion_active = bool(r2.get("inversion_trigger"))
+    if all_pass:
+        overall = "PASS"
+        exit_code = 0
+    elif inversion_active:
+        overall = "FAIL+INVERT"
+        exit_code = 2
+    else:
+        overall = "FAIL"
+        exit_code = 1
+
+    return {
+        "verdict": overall,
+        "exit_code": exit_code,
+        "evidence": {
+            "screen_1_coverage": dict(r1),
+            "screen_2_lift": dict(r2),
+            "screen_3_jaccard": dict(r3),
+            "screen_4_information_split": dict(r4),
+        },
+    }
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--pair", action="append", required=True)
@@ -239,30 +307,19 @@ def main() -> int:
         file=sys.stderr,
     )
 
-    r1 = evaluate_coverage(pooled)
-    treatment, control_b, inversion = _screen_2_cohorts(pooled)
-    r2 = evaluate_lift(control_b=control_b, treatment=treatment, inversion=inversion)
-    grid = _screen_3_grid(frames[0])
-    r3 = evaluate_jaccard(grid)
-    funding_binned, vol_binned = _screen_4_terciles(pooled)
-    r4 = evaluate_information_split(
-        funding_binned=funding_binned, vol_binned=vol_binned
+    result = run_screens(pooled, frames[0])
+    legacy_results = [
+        result["evidence"]["screen_1_coverage"],
+        result["evidence"]["screen_2_lift"],
+        result["evidence"]["screen_3_jaccard"],
+        result["evidence"]["screen_4_information_split"],
+    ]
+    _write_report(args.out, legacy_results, result["verdict"])
+    print(
+        f"SIA verdict: {result['verdict']} (exit {result['exit_code']}) → {args.out}",
+        file=sys.stderr,
     )
-
-    results: list[dict[str, Any]] = [dict(r1), dict(r2), dict(r3), dict(r4)]
-    all_pass = all(r["verdict"] == "PASS" for r in results)
-    inversion_active = bool(r2.get("inversion_trigger"))
-    if all_pass:
-        overall = "PASS"
-        exit_code = 0
-    elif inversion_active:
-        overall = "FAIL+INVERT"
-        exit_code = 2
-    else:
-        overall = "FAIL"
-        exit_code = 1
-    _write_report(args.out, results, overall)
-    print(f"SIA verdict: {overall} (exit {exit_code}) → {args.out}", file=sys.stderr)
+    exit_code: int = result["exit_code"]
     return exit_code
 
 
