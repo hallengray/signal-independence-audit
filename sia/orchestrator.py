@@ -1,16 +1,35 @@
 #!/usr/bin/env python3
-"""SIA orchestrator: build training-window inputs, run all 4 screens, write verdict report.
+"""SIA orchestrator — runs the four screens and produces a single verdict.
 
-Usage:
+Two entry points:
+
+- ``run_screens(pooled, jaccard_frame)`` — **library API**. Pass a pre-built
+  per-candle dataframe (boolean filter columns + forward-return columns +
+  signal columns; see ``run_screens``'s own docstring for the required schema)
+  plus a single-pair frame for Screen 3's grid sweep. Returns a verdict dict.
+  Use this from notebooks or any in-memory pipeline.
+
+- ``main()`` — **CLI entry point**. Loads Freqtrade-format OHLCV JSON from
+  ``--data-dir``, builds the pooled dataframe over ``--pair`` /
+  ``--train-start`` / ``--train-end``, writes a Markdown verdict report to
+  ``--out``, and exits with the verdict's exit code.
+
+All four screens run unconditionally (no short-circuit). The top-level
+verdict maps to an exit code:
+
+    PASS         → exit 0  → all four screens passed; proceed to hyperopt.
+    FAIL         → exit 1  → at least one screen failed; the kill should be
+                             ADR-documented.
+    FAIL+INVERT  → exit 2  → locked direction failed AND the inversion clause
+                             fired in Screen 2; the wrong-direction hypothesis
+                             warrants a pre-committed retest (see case-study/03).
+
+CLI usage:
     python -m sia.orchestrator \\
         --pair BTC/USDT --pair ETH/USDT \\
         --train-start 2021-04-08 --train-end 2024-12-31 \\
+        --data-dir /path/to/freqtrade/user_data/data/binance \\
         --out report.json
-
-Exit codes:
-    0 — PASS (all 4 screens pass; proceed to hyperopt)
-    1 — FAIL (no inversion trigger; kill ADR documents the failure)
-    2 — FAIL+INVERT (inversion clause triggered; investigate the wrong-direction hypothesis)
 """
 
 from __future__ import annotations

@@ -1,9 +1,18 @@
-"""SIA Screen 1: coverage test.
+"""SIA Screen 1 — Coverage test.
 
-Counts candles satisfying macro, breakout, gate, and the full conjunction.
-PASS iff:
-  - new-gate reduces trade frequency by >= 20% vs macro+breakout, AND
-  - full conjunction yields >= 30 trades across training.
+Does the candidate signal actually gate the baseline? A signal that admits
+nearly every baseline candle is redundant; one that admits almost none is
+over-restrictive. Both fail.
+
+PASS iff (a) the candidate signal cuts the baseline-conjunction count by
+≥ 20% AND (b) the full conjunction (baseline filters + candidate signal)
+yields ≥ 30 admitted candles across the evaluation window. Returns counts
+at each filtering stage plus the realised reduction percentage.
+
+The ``macro_pass / breakout_pass / funding_gate_pass`` column names reflect
+the framework's origin in a crypto-strategy audit (see case-study/04 for the
+worked example), but the test generalises to any baseline-filter + candidate-
+signal pair on any domain — substitute your own per-candle boolean columns.
 """
 
 from __future__ import annotations

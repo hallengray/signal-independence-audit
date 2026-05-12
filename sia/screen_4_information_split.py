@@ -1,9 +1,23 @@
-"""SIA Screen 4: information split.
+"""SIA Screen 4 — Information-split control.
 
-Bin candidate candles by funding tercile vs realised-vol tercile (control).
-For each binning compute {mean 10d fwd ret, win rate, Sharpe per bin}. PASS
-iff funding-tercile binning shows wider tercile separation than vol-tercile
-control on >= 2 of 3 metrics.
+Does the candidate signal carry information BEYOND what an obvious confounder
+already explains? Bins the post-baseline cohort two ways — by candidate-signal
+tercile and by confounder tercile — and measures the 10d forward-return
+separation across terciles on three metrics: mean, win rate, and per-tercile
+Sharpe ratio. The candidate signal wins on a given metric if its tercile
+separation (max-minus-min across low/mid/high) is wider than the confounder's
+on that metric.
+
+In the original case study the confounder was realised volatility
+(``vol_20d``) and the candidate signal was a funding-rate gate. The framework
+generalises: pass any candidate signal paired with any plausible confounder
+against the same forward-return target.
+
+PASS iff the candidate signal shows wider tercile separation than the
+confounder on ≥ 2 of 3 metrics. If the confounder explains more variance
+than the candidate adds, the signal is structurally redundant — a baseline
+that already controls for the confounder would absorb most of what the
+candidate offers.
 """
 
 from __future__ import annotations

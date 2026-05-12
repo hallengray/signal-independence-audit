@@ -1,8 +1,19 @@
-"""SIA Screen 3: entry-set stability (Jaccard).
+"""SIA Screen 3 — Hyperparameter-collapse test (Jaccard overlap).
 
-Sweep a 5×5 grid over (atr_mult, funding_threshold_pct) and compute the mean
-pairwise Jaccard overlap of triggered-candle sets across all C(25,2)=300
-pairs. PASS iff mean pairwise Jaccard <= 0.85.
+Across a 5×5 grid of nearby hyperparameter settings, do the resulting trade
+sets remain meaningfully distinct? If every grid point picks essentially the
+same candles, the signal is collapsed onto one effective hyperparameter and
+a downstream walk-forward optimisation will just re-fit that one — the test
+catches strategies whose apparent tunability is illusory.
+
+PASS iff the **mean pairwise Jaccard overlap** across all C(25,2)=300 grid-
+point pairs is ≤ 0.85. Higher overlap means the grid is collapsing onto a
+single entry set, which is the failure mode this screen exists to detect.
+LOWER overlap is healthier.
+
+In the original case study the grid axes were ``atr_mult × funding_threshold_pct``;
+the framework is agnostic to which axes you pick — the caller builds the
+``grid`` dict mapping hyperparameter-tuples to sets of admitted-candle indices.
 """
 
 from __future__ import annotations

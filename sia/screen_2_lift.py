@@ -1,13 +1,24 @@
-"""SIA Screen 2: lift test with bootstrap CIs and inversion-clause measurement.
+"""SIA Screen 2 — Lift test (the headline screen).
 
-PASS iff treatment cohort mean exceeds control_b mean by >= 0.5 * pooled-stddev
-on >= 2 of 3 horizons (5d, 10d, 20d). Bootstrap 95% CIs are computed for each
-cohort and the screen flags CI overlap with the threshold for explicit review.
+Does the gated cohort beat the ungated cohort on forward returns by a margin
+worth banking on? Compares the *treatment* cohort (baseline filters AND the
+candidate signal) against the *control* cohort (baseline filters only) on
+three forward-return horizons: 5d, 10d, and 20d. The horizons are read from
+the dataframe's ``fwd_ret_{5,10,20}d`` columns.
 
-Inversion clause: the inverted-direction cohort is evaluated with identical
-machinery. If it shows >= 1.0sigma separation on >= 2 of 3 horizons, the
-inversion trigger fires (verdict still depends on the locked direction's
-screens).
+PASS iff the treatment mean exceeds the control mean by ≥ 0.5 × pooled-stddev
+on ≥ 2 of 3 horizons. Bootstrap 95% CIs are reported per cohort and the screen
+flags CI overlap at the threshold for explicit reviewer attention. Cohorts
+smaller than 30 raise a review-required flag; cohorts smaller than 10 cause
+the horizon to be skipped.
+
+The **inversion clause** runs in parallel against the inverted-direction
+cohort (baseline filters AND the inverted candidate signal). If that cohort
+shows ≥ 1.0σ separation from control on ≥ 2 of 3 horizons AND the locked
+direction failed, the ``inversion_trigger`` flag fires — the orchestrator
+then maps the overall verdict to ``FAIL+INVERT``, signalling that the
+wrong-direction hypothesis is worth a separate, pre-committed retest rather
+than a quiet kill.
 """
 
 from __future__ import annotations
