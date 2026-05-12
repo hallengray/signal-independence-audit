@@ -80,6 +80,7 @@ def _build_signals(
     h4_aug["breakout_pass"] = h4_aug["close"] > h4_aug["donchian_high"]
     pair_underscored = pair.replace("/", "_")
     funding_path = data_dir / "funding_rates" / f"{pair_underscored}-funding-8h.json"
+    assert isinstance(h4_aug.index, pd.DatetimeIndex)
     funding_4h = load_funding_aligned_to_4h(funding_path, h4_aug.index)
     h4_aug["funding_4h"] = funding_4h.values
     h4_aug["funding_gate_pass"] = funding_gate(
@@ -89,11 +90,13 @@ def _build_signals(
         threshold_pct=threshold_pct,
     ).values
     # Inversion gate: funding > 40th pct (symmetric inversion of < 60th pct).
-    h4_aug["funding_gate_inversion"] = ~funding_gate(
-        pd.Series(h4_aug["funding_4h"].values, index=h4_aug.index),
-        rolling_days=FUNDING_ROLLING_DAYS,
-        lookback_days=FUNDING_LOOKBACK_DAYS,
-        threshold_pct=1.0 - INVERSION_THRESHOLD_PCT,
+    h4_aug["funding_gate_inversion"] = (
+        ~funding_gate(
+            pd.Series(h4_aug["funding_4h"].values, index=h4_aug.index),
+            rolling_days=FUNDING_ROLLING_DAYS,
+            lookback_days=FUNDING_LOOKBACK_DAYS,
+            threshold_pct=1.0 - INVERSION_THRESHOLD_PCT,
+        )
     ).values
     for h_days in HORIZONS:
         h_candles = h_days * 6
