@@ -8,9 +8,10 @@ The four screens (coverage, lift, jaccard, information-split) run in seconds on 
 
 - [`sia/`](./sia/) — the four-screen harness, packaged for `pip install -e .`.
 - [`tests/`](./tests/) — 16 unit tests covering the screens and orchestrator. Run via `pytest`.
-- [`case-study/`](./case-study/) — 10 curated documents from the original crypto project that produced this methodology. See [`case-study/00-readme.md`](./case-study/00-readme.md) for the reading guide.
+- [`case-study/`](./case-study/) — 11 curated documents from the original crypto project that produced this methodology. See [`case-study/00-readme.md`](./case-study/00-readme.md) for the reading guide.
 - [`examples/fcmfd_replay.ipynb`](./examples/fcmfd_replay.ipynb) — runnable Jupyter notebook replaying an FCMFD-style SIA-kill on **genuinely synthetic data** (NOT a copy of the real Phase 4 data the case study describes).
 - [`BLOG_POST.md`](./BLOG_POST.md) — canonical Markdown source for the project blog post telling the negative-result-with-mechanism story across four crypto strategy attempts. (Hosted version: <https://hallengray.github.io/signal-independence-audit/BLOG_POST.html>.)
+- [`MSS_POST.md`](./MSS_POST.md): the follow-up post (the epilogue). After the four attempts and the decision to stop, one owned exception was run under a deliberately lowered Sharpe bar: the Markov-Switched Strategy, which combined the two already-failed strategies under a regime detector. It passed the SIA screen for the first time in the project, then lost money out-of-sample anyway. (Hosted version: <https://hallengray.github.io/signal-independence-audit/MSS_POST.html>.)
 
 ## Why this exists
 
@@ -84,9 +85,13 @@ For a runnable worked example on genuinely synthetic data, see [`examples/fcmfd_
 
 [**Hosted version on GitHub Pages**](https://hallengray.github.io/signal-independence-audit/BLOG_POST.html) — relative case-study links auto-resolved by GitHub Pages, so off-repo readers can navigate the whole story without leaving the published site.
 
+### The follow-up: the fifth failure
+
+[`MSS_POST.md`](./MSS_POST.md) is the epilogue. After the four attempts and the decision to stop, one owned exception was run under a deliberately lowered bar (the Sharpe pass mark dropped from 1.0 to 0.85): a regime-switching strategy that combined the two losers, switching tactics by market mood. It passed the SIA screen for the first time in the project, then lost money out-of-sample anyway. [Hosted version on GitHub Pages](https://hallengray.github.io/signal-independence-audit/MSS_POST.html).
+
 ## Read the case study
 
-[`case-study/00-readme.md`](./case-study/00-readme.md) — reading guide for the 10 curated documents. Three reading paths:
+[`case-study/00-readme.md`](./case-study/00-readme.md) — reading guide for the 11 curated documents. Three reading paths:
 
 - **Chronological** — the full project trajectory in numbered order.
 - **SIA-methodology-focused** — for readers who want the tool, not the project history.
