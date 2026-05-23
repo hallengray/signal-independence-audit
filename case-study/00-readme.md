@@ -1,6 +1,6 @@
 # Case Study Reading Guide
 
-This directory contains 10 curated artefacts from Project Aṣe — a quantitative crypto-trading research project that produced a documented negative result with mechanism across four strategy attempts plus a literature audit, all under pre-committed Sharpe > 1.0 AND profit-factor > 1.4 criteria.
+This directory contains 11 curated artefacts from Project Aṣe, a quantitative crypto-trading research project that produced a documented negative result with mechanism across four strategy attempts plus a literature audit, all under pre-committed criteria (Sharpe > 1.0 AND profit factor > 1.4). The 11th document is an epilogue: after the decision to stop (Path E), the project ran one owned, pre-committed exception (the Markov-Switched Strategy) under a deliberately revised bar that lowered the Sharpe pass mark to 0.85. It failed too. The narrative writeup of that epilogue is at `../MSS_POST.md`.
 
 The full project repo is private; this curated subset is the evidence chain for the blog post at `../BLOG_POST.md`.
 
@@ -24,6 +24,7 @@ Read in numbered order. Mirrors how the project unfolded over time.
 8. `08-gate-1-pf-verification.md` — Phase 5d Gate 1: full-text retrieval of the foundational literature paper. PF is never reported in the paper.
 9. `09-path-e-routing-adr-0019.md` — Routing decision ADR. Path E (stop in-universe, ship the framework) is selected.
 10. `10-audit-corrigendum.md` — The standalone teaching artefact about the AI-assisted literature research failure mode the Gate 1 verification exposed.
+11. `11-mss-kill-adr-0027.md` (epilogue): the Markov-Switched Strategy. The one owned exception taken after Path E, under a revised bar (Sharpe pass mark lowered to 0.85). It combined the failed trend and mean-reversion strategies via a regime detector, passed the SIA pre-screen for the first time in the project, then failed out-of-sample anyway (0 of 5 candidates, negative Sharpe). Narrative version: `../MSS_POST.md`.
 
 ### B. SIA-methodology focused (you want the tool, not the project history)
 
